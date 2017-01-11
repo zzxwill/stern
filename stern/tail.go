@@ -17,6 +17,7 @@ package stern
 import (
 	"bufio"
 	"context"
+	"crypto/md5"
 	"fmt"
 	"regexp"
 
@@ -54,7 +55,7 @@ func NewTail(podName, containerName string, options *TailOptions) *Tail {
 	}
 }
 
-var index = 0
+// var index = 0
 
 var colorList = [][2]*color.Color{
 	{color.New(color.FgHiCyan), color.New(color.FgCyan)},
@@ -65,13 +66,32 @@ var colorList = [][2]*color.Color{
 	{color.New(color.FgHiRed), color.New(color.FgRed)},
 }
 
+func Color256() []*color.Color {
+	fgbg := color.Attribute(38)
+	someConst := color.Attribute(5)
+	out := []*color.Color{}
+	for green := 0; green < 6; green++ {
+		for red := 0; red < 6; red++ {
+			for blue := 0; blue < 6; blue++ {
+				myCol := color.Attribute(16 + (red * 36) + (green * 6) + blue)
+				out = append(out, color.New(fgbg, someConst, myCol))
+			}
+		}
+	}
+	return out
+}
+
 // Start starts tailing
 func (t *Tail) Start(ctx context.Context, i corev1.PodInterface) {
-	index++
 
-	colorIndex := index % len(colorList)
-	t.podColor = colorList[colorIndex][0]
-	t.containerColor = colorList[colorIndex][1]
+	sum := md5.Sum([]byte(t.PodName))
+	index := int(sum[0])
+
+	cols := Color256()
+
+	colorIndex := index % len(cols)
+	t.podColor = cols[colorIndex]
+	t.containerColor = cols[colorIndex]
 
 	go func() {
 		g := color.New(color.FgHiGreen, color.Bold).SprintFunc()
