@@ -17,7 +17,6 @@ package stern
 import (
 	"bufio"
 	"context"
-	"crypto/md5"
 	"fmt"
 	"regexp"
 
@@ -55,8 +54,6 @@ func NewTail(podName, containerName string, options *TailOptions) *Tail {
 	}
 }
 
-// var index = 0
-
 var colorList = [][2]*color.Color{
 	{color.New(color.FgHiCyan), color.New(color.FgCyan)},
 	{color.New(color.FgHiGreen), color.New(color.FgGreen)},
@@ -66,15 +63,21 @@ var colorList = [][2]*color.Color{
 	{color.New(color.FgHiRed), color.New(color.FgRed)},
 }
 
-func Color256() []*color.Color {
+// Color36 gives us 36 colors to use for a-z0-9
+func Color36() []*color.Color {
 	fgbg := color.Attribute(38)
 	someConst := color.Attribute(5)
 	out := []*color.Color{}
+	i := 0
 	for green := 0; green < 6; green++ {
-		for red := 0; red < 6; red++ {
+		for red := 2; red < 6; red++ {
 			for blue := 0; blue < 6; blue++ {
-				myCol := color.Attribute(16 + (red * 36) + (green * 6) + blue)
-				out = append(out, color.New(fgbg, someConst, myCol))
+				// only do every third to get contrast
+				i++
+				if i%4 == 0 {
+					myCol := color.Attribute(16 + (red * 36) + (green * 6) + blue)
+					out = append(out, color.New(fgbg, someConst, myCol))
+				}
 			}
 		}
 	}
@@ -84,11 +87,9 @@ func Color256() []*color.Color {
 // Start starts tailing
 func (t *Tail) Start(ctx context.Context, i corev1.PodInterface) {
 
-	sum := md5.Sum([]byte(t.PodName))
-	index := int(sum[0])
+	index := int([]byte(t.PodName)[len(t.PodName)-1])
 
-	cols := Color256()
-
+	cols := Color36()
 	colorIndex := index % len(cols)
 	t.podColor = cols[colorIndex]
 	t.containerColor = cols[colorIndex]
