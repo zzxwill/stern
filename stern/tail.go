@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/fatih/color"
@@ -45,6 +46,7 @@ type TailOptions struct {
 	Exclude      []*regexp.Regexp
 	Namespace    bool
 	TailLines    *int64
+	NoPrefix     bool
 }
 
 // NewTail returns a new tail for a Kubernetes container inside a pod
@@ -87,9 +89,9 @@ func (t *Tail) Start(ctx context.Context, i corev1.PodInterface) {
 		p := t.podColor.SprintFunc()
 		c := t.containerColor.SprintFunc()
 		if t.Options.Namespace {
-			fmt.Printf("%s %s %s › %s\n", g("+"), p(t.Namespace), p(t.PodName), c(t.ContainerName))
+			fmt.Fprintf(os.Stderr, "%s %s %s › %s\n", g("+"), p(t.Namespace), p(t.PodName), c(t.ContainerName))
 		} else {
-			fmt.Printf("%s %s › %s\n", g("+"), p(t.PodName), c(t.ContainerName))
+			fmt.Fprintf(os.Stderr, "%s %s › %s\n", g("+"), p(t.PodName), c(t.ContainerName))
 		}
 
 		req := i.GetLogs(t.PodName, &v1.PodLogOptions{
@@ -153,6 +155,11 @@ func (t *Tail) Close() {
 
 // Print prints a color coded log message with the pod and container names
 func (t *Tail) Print(msg string) {
+	if t.Options.NoPrefix {
+		fmt.Print(msg)
+		return
+	}
+
 	p := t.podColor.SprintFunc()
 	c := t.containerColor.SprintFunc()
 	if t.Options.Namespace {

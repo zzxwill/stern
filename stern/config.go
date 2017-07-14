@@ -34,4 +34,5 @@ type Config struct {
 	AllNamespaces  bool
 	LabelSelector  labels.Selector
 	TailLines      *int64
+	NoPrefix       bool
 }

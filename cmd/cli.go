@@ -49,6 +49,7 @@ type Options struct {
 	color         string
 	version       bool
 	completion    string
+	noPrefix      bool
 }
 
 var opts = &Options{
@@ -77,6 +78,7 @@ func Run() {
 	cmd.Flags().StringVar(&opts.color, "color", opts.color, "Color output. Can be 'always', 'never', or 'auto'")
 	cmd.Flags().BoolVarP(&opts.version, "version", "v", opts.version, "Print the version and exit")
 	cmd.Flags().StringVar(&opts.completion, "completion", opts.completion, "Outputs stern command-line completion code for the specified shell. Can be 'bash' or 'zsh'")
+	cmd.Flags().BoolVar(&opts.noPrefix, "no-prefix", opts.noPrefix, "Do not include any prefix in the logs, such as namespace, podname, etc")
 
 	// Specify custom bash completion function
 	cmd.BashCompletionFunction = bash_completion_func
@@ -199,6 +201,7 @@ func parseConfig(args []string) (*stern.Config, error) {
 		AllNamespaces:  opts.allNamespaces,
 		LabelSelector:  labelSelector,
 		TailLines:      tailLines,
+		NoPrefix:       opts.noPrefix,
 	}, nil
 }
 
