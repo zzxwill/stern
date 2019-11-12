@@ -55,12 +55,10 @@ func (stateConfig ContainerState) Match(containerState v1.ContainerState) bool {
 }
 
 func (stateConfig ContainerState) has(state string) bool {
-	switch state {
-	case
-		RUNNING,
-		WAITING,
-		TERMINATED:
-		return true
+	for _, s := range stateConfig {
+		if s == state {
+			return true
+		}
 	}
 	return false
 }
