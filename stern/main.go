@@ -75,9 +75,13 @@ func Run(ctx context.Context, config *Config) error {
 		for p := range added {
 			id := p.GetID()
 			if tails[id] != nil {
-				continue
+				if tails[id].Active == true {
+					continue
+				} else { // cleanup failed tail to restart
+					tails[id].Close()
+					delete(tails, id)
+				}
 			}
-
 			tail := NewTail(p.Namespace, p.Pod, p.Container, config.Template, &TailOptions{
 				Timestamps:   config.Timestamps,
 				SinceSeconds: int64(config.Since.Seconds()),
@@ -87,7 +91,6 @@ func Run(ctx context.Context, config *Config) error {
 				TailLines:    config.TailLines,
 			})
 			tails[id] = tail
-
 			tail.Start(ctx, clientset.CoreV1().Pods(p.Namespace), logC)
 		}
 	}()
