@@ -4,39 +4,22 @@ on:
     types:
     - created # on push does not work and `on: release` triggers 3 builds
 jobs:
-  release-linux-amd64:
-    name: release linux/amd64
+  release:
+    name: release go binary
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin]
+        goarch: [amd64]
     steps:
     - uses: actions/checkout@master
-    # https://github.com/wangyoucao577/go-release-action/issues/9
-    #- name: Fix
-    #  run: 'mkdir pkg && mv stern pkg && sed -i "s;stern/stern;stern/pkg/stern;" cmd/cli.go'
     - name: Version
       run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
     - name: compile and release
-      uses: wangyoucao577/go-release-action@bugfix/binary-name-duplicate-with-folder
+      uses: wangyoucao577/go-release-action@master
       env:
         CGO_ENABLED: "0" # support alpine
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        goarch: amd64
-        goos: linux
-  release-darwin-amd64:
-    name: release darwin/amd64
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    # https://github.com/wangyoucao577/go-release-action/issues/9
-    #- name: Fix
-    #  run: 'mkdir pkg && mv stern pkg && sed -i "s;stern/stern;stern/pkg/stern;" cmd/cli.go'
-    - name: Version
-      run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
-    - name: compile and release
-      uses: wangyoucao577/go-release-action@bugfix/binary-name-duplicate-with-folder
-      env:
-        CGO_ENABLED: "0" # support alpine
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goarch: amd64
-        goos: darwin
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
