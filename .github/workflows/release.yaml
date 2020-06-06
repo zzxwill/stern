@@ -15,7 +15,7 @@ jobs:
     - name: Version
       run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
     - name: compile and release
-      uses: wangyoucao577/go-release-action@v1.4
+      uses: wangyoucao577/go-release-action@bugfix/binary-name-duplicate-with-folder
       env:
         CGO_ENABLED: "0" # support alpine
       with:
@@ -33,7 +33,7 @@ jobs:
     - name: Version
       run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
     - name: compile and release
-      uses: wangyoucao577/go-release-action@v1.4
+      uses: wangyoucao577/go-release-action@bugfix/binary-name-duplicate-with-folder
       env:
         CGO_ENABLED: "0" # support alpine
       with:
