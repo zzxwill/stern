@@ -16,7 +16,7 @@ jobs:
     - name: Version
       run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
     - name: compile and release
-      uses: wangyoucao577/go-release-action@master
+      uses: wangyoucao577/go-release-action@v1.5
       env:
         CGO_ENABLED: "0" # support alpine
       with:
