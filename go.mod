@@ -1,7 +1,5 @@
 module github.com/wercker/stern
 
-go 1.12.9
-
 require (
 	github.com/fatih/color v0.0.0-20180516100307-2d684516a886
 	github.com/ghodss/yaml v1.0.0 // indirect
@@ -29,3 +27,5 @@ require (
 	k8s.io/apimachinery v0.0.0-20190612205821-1799e75a0719
 	k8s.io/client-go v0.0.0-20190620085101-78d2af792bab
 )
+
+go 1.14

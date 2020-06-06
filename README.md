@@ -16,7 +16,13 @@ limit what containers to show. By default all containers are listened to.
 
 ## Installation
 
-If you don't want to build from source go grab a [binary release](https://github.com/wercker/stern/releases)
+[Binary release](../../releases):
+
+```
+curl -sfL <URL> | tar -zx
+```
+
+Build from source:
 
 ```
 git clone https://github.com/wercker/stern.git && cd stern
