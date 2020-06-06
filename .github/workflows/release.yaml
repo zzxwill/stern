@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@master
     # https://github.com/wangyoucao577/go-release-action/issues/9
-    - name: Fix
-      run: 'mkdir pkg && mv stern pkg && sed -i "s;stern/stern;stern/pkg/stern;" cmd/cli.go'
+    #- name: Fix
+    #  run: 'mkdir pkg && mv stern pkg && sed -i "s;stern/stern;stern/pkg/stern;" cmd/cli.go'
     - name: Version
       run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
     - name: compile and release
@@ -28,8 +28,8 @@ jobs:
     steps:
     - uses: actions/checkout@master
     # https://github.com/wangyoucao577/go-release-action/issues/9
-    - name: Fix
-      run: 'mkdir pkg && mv stern pkg && sed -i "s;stern/stern;stern/pkg/stern;" cmd/cli.go'
+    #- name: Fix
+    #  run: 'mkdir pkg && mv stern pkg && sed -i "s;stern/stern;stern/pkg/stern;" cmd/cli.go'
     - name: Version
       run: sed -i s/"master"/"${GITHUB_REF##*/}"/ cmd/cli.go
     - name: compile and release
